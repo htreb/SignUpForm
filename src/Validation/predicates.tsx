@@ -34,6 +34,18 @@ const EMAIL: IPredicate = {
   failCases: ["@email.com", "usernameemail.com", "username@.com", "username@email."]
 };
 
+export function getInputWarnings(value: string, checks: IPredicate[]): string[] {
+  const errors: string[] = [];
+  checks.forEach((check) => {
+    const isValid = check.regEx.test(value);
+    if (!isValid) {
+      errors.push(check.errorMessage);
+    }
+  });
+
+  return errors;
+}
+
 export const PREDICATES = {
   CAPITAL,
   NUMERIC,
