@@ -1,6 +1,8 @@
-import React, { FormEvent, ReactElement, useEffect, useState } from "react";
+import React, { FormEvent, ReactElement, useState } from "react";
 import { getInputWarnings, PREDICATES } from "../../Validation/predicates";
 import S from "../../Strings/strings";
+
+import "./SignUpForm.scss";
 
 const usernameChecks = [PREDICATES.EMAIL];
 const passwordChecks = [PREDICATES.CAPITAL, PREDICATES.NUMERIC, PREDICATES.SPECIAL];
@@ -12,10 +14,6 @@ function SignUpForm(): ReactElement {
   const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [signedIn, setSignedIn] = useState(false);
-
-  useEffect(() => {
-    setSignedIn(false);
-  }, [username, password, confirmPassword]);
 
   function onUsernameChange(event: React.ChangeEvent<HTMLInputElement>): void {
     const { value } = event.target;
@@ -54,40 +52,60 @@ function SignUpForm(): ReactElement {
     }
   }
 
+  function renderContent(): ReactElement {
+    if (signedIn) {
+      return <p>{S.successfullySignedUp}</p>;
+    }
+    return (
+      <form className="sign-up-form" onSubmit={signIn}>
+        <div className="input-container">
+          <input
+            placeholder={S.username}
+            value={username}
+            onChange={onUsernameChange}
+          />
+          <div className="warnings">
+            { usernameErrors.map((msg) => <p key={msg}>{msg}</p>) }
+          </div>
+        </div>
+        <div className="input-container">
+          <input
+            placeholder={S.password}
+            value={password}
+            onChange={onPasswordChange}
+            type="password"
+          />
+          <div className="warnings">
+            { passwordErrors.map((msg) => <p key={msg}>{msg}</p>) }
+          </div>
+        </div>
+        <div className="input-container">
+          <input
+            placeholder={S.confirmPassword}
+            value={confirmPassword}
+            onChange={onConfirmPasswordChange}
+            type="password"
+          />
+          <div className="warnings">
+            { !checkPasswordsMatch() && <p>{S.passwordsMustMatch}</p> }
+          </div>
+        </div>
+        <button
+          type="submit"
+          disabled={!checkFormValid()}
+          className="submit-button"
+        >
+          {S.signUp}
+        </button>
+        { signedIn && <p>{S.successfullySignedUp}</p> }
+      </form>
+    );
+  }
+
   return (
-    <form className="App" onSubmit={signIn}>
-      <div>
-        <input
-          placeholder={S.username}
-          value={username}
-          onChange={onUsernameChange}
-        />
-        { usernameErrors.map((msg) => <p key={msg}>{msg}</p>) }
-      </div>
-      <div>
-        <input
-          placeholder={S.password}
-          value={password}
-          onChange={onPasswordChange}
-        />
-        { passwordErrors.map((msg) => <p key={msg}>{msg}</p>) }
-      </div>
-      <div>
-        <input
-          placeholder={S.confirmPassword}
-          value={confirmPassword}
-          onChange={onConfirmPasswordChange}
-        />
-        { !checkPasswordsMatch() && <p>{S.passwordsMustMatch}</p> }
-      </div>
-      <button
-        type="submit"
-        disabled={!checkFormValid()}
-      >
-        {S.signUp}
-      </button>
-      { signedIn && <p>{S.successfullySignedUp}</p> }
-    </form>
+    <div className="container">
+      {renderContent()}
+    </div>
   );
 }
 
