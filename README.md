@@ -1,22 +1,28 @@
 # Exmple Project to fulfill the following requirements:
-Functional spec
+
+## Front-end Coding Challenge
+The coding challenge will provide us with an example of your work. We will discuss and pair to make changes to your code during your technical interview. The code should demonstrate javascript and unit test knowledge. All work should be done using a TDD approach.
+
+### Your task
+Develop a sign-up form.
+
+### Functional spec
 Make a sign up form
-● Form fields
-○ username
-■ must be valid email address
-○ password
-■ must have at least one capital letter, one numeric character, and one
+1. Form fields
+    * username
+      * must be valid email address
+    * password
+      * must have at least one capital letter, one numeric character, and one
 special character
-○ confirm password
-■ must be the same as the password field
-● The user must complete all three fields to submit the form
-● When the form is submitted, display a success message and do not need to submit
+    * confirm password
+      * must be the same as the password field
+2. The user must complete all three fields to submit the form
+3. When the form is submitted, display a success message and do not need to submit
 the form data to a server
 
-Technical Spec
-Front-end code only. The front-end should be a single page React app. You may take this
-opportunity to demonstrate your CSS or HTML Knowledge
-
+### Technical Spec
+Front-end code only. The front-end should be a single page React app. You may take this opportunity to demonstrate your CSS or HTML knowledge.
+  
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
