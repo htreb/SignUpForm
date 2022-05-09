@@ -52,21 +52,33 @@ function SignUpForm(): ReactElement {
     }
   }
 
+  function renderWarnings(errors: string[]): ReactElement {
+    return (
+      <div className="warnings" style={{ height: `${errors.length * 20}px` }}>
+        { errors.map((msg) => <p key={msg}>{msg}</p>) }
+      </div>
+    );
+  }
+
   function renderContent(): ReactElement {
     if (signedIn) {
-      return <p>{S.successfullySignedUp}</p>;
+      return (
+        <div className="success">
+          <h1>{S.successfullySignedUp}</h1>
+          <img src="https://c.tenor.com/9ItR8nSuxE0AAAAM/thumbs-up-computer.gif" alt="success!" />
+        </div>
+      );
     }
     return (
       <form className="sign-up-form" onSubmit={signIn}>
+        <h1>{S.welcome}</h1>
         <div className="input-container">
           <input
             placeholder={S.username}
             value={username}
             onChange={onUsernameChange}
           />
-          <div className="warnings">
-            { usernameErrors.map((msg) => <p key={msg}>{msg}</p>) }
-          </div>
+          {renderWarnings(usernameErrors)}
         </div>
         <div className="input-container">
           <input
@@ -75,9 +87,7 @@ function SignUpForm(): ReactElement {
             onChange={onPasswordChange}
             type="password"
           />
-          <div className="warnings">
-            { passwordErrors.map((msg) => <p key={msg}>{msg}</p>) }
-          </div>
+          {renderWarnings(passwordErrors)}
         </div>
         <div className="input-container">
           <input
@@ -86,9 +96,7 @@ function SignUpForm(): ReactElement {
             onChange={onConfirmPasswordChange}
             type="password"
           />
-          <div className="warnings">
-            { !checkPasswordsMatch() && <p>{S.passwordsMustMatch}</p> }
-          </div>
+          {renderWarnings(checkPasswordsMatch() ? [] : [S.passwordsMustMatch])}
         </div>
         <button
           type="submit"
@@ -97,7 +105,6 @@ function SignUpForm(): ReactElement {
         >
           {S.signUp}
         </button>
-        { signedIn && <p>{S.successfullySignedUp}</p> }
       </form>
     );
   }

@@ -4,7 +4,8 @@ const strings = {
   confirmPassword: "Confirm password",
   passwordsMustMatch: "Passwords do not match",
   signUp: "Sign up",
-  successfullySignedUp: "Successfully signed up!"
+  successfullySignedUp: "Successfully signed up!",
+  welcome: "Hello!"
 };
 
 export default strings;
