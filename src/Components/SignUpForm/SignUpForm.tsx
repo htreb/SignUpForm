@@ -1,63 +1,49 @@
-import React, { FormEvent, ReactElement, useState } from "react";
-import { getInputWarnings, PREDICATES } from "../../Validation/predicates";
+import React, { FormEvent, ReactElement, useEffect, useState } from "react";
+import { getInputWarnings, IPredicate, PREDICATES } from "../../Validation/predicates";
 import S from "../../Strings/strings";
 
 import "./SignUpForm.scss";
+import { TextInputAndValidate } from "../TextInputAndValidate/TextInputAndValidate";
 
 const usernameChecks = [PREDICATES.EMAIL];
 const passwordChecks = [PREDICATES.CAPITAL, PREDICATES.NUMERIC, PREDICATES.SPECIAL];
 
 function SignUpForm(): ReactElement {
   const [username, setUsername] = useState("");
-  const [usernameErrors, setUsernameErrors] = useState<string[]>([]);
   const [password, setPassword] = useState("");
-  const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [signedIn, setSignedIn] = useState(false);
+  const [isFormDirty, setIsFormDirty] = useState(false);
 
-  function onUsernameChange(event: React.ChangeEvent<HTMLInputElement>): void {
-    const { value } = event.target;
-    setUsername(value);
-    setUsernameErrors(getInputWarnings(value, usernameChecks));
-  }
-
-  function onPasswordChange(event: React.ChangeEvent<HTMLInputElement>): void {
-    const { value } = event.target;
-    setPassword(value);
-    setPasswordErrors(getInputWarnings(value, passwordChecks));
-  }
-
-  function onConfirmPasswordChange(event: React.ChangeEvent<HTMLInputElement>): void {
-    const { value } = event.target;
-    setConfirmPassword(value);
-  }
+  useEffect(() => {
+    if (username || password || confirmPassword) {
+      setIsFormDirty(true);
+    }
+  }, [username, password, confirmPassword]);
 
   function checkPasswordsMatch(): boolean {
     return password === confirmPassword;
+  }
+
+  function getErrors(value: string, checks: IPredicate[]): string[] {
+    if (!isFormDirty) return [];
+    return getInputWarnings(value, checks);
   }
 
   function checkFormValid(): boolean {
     return !!username
       && !!password
       && !!confirmPassword
-      && !usernameErrors.length
-      && !passwordErrors.length
+      && !getErrors(username, usernameChecks).length
+      && !getErrors(password, passwordChecks).length
       && checkPasswordsMatch();
   }
 
-  function signIn(e: FormEvent<HTMLFormElement>): void {
-    e.preventDefault(); // Prevents screen refresh
+  function signIn(event: FormEvent<HTMLFormElement>): void {
+    event.preventDefault(); // Prevents screen refresh
     if (checkFormValid()) {
       setSignedIn(true);
     }
-  }
-
-  function renderWarnings(errors: string[]): ReactElement {
-    return (
-      <div className="warnings" style={{ height: `${errors.length * 20}px` }}>
-        { errors.map((msg) => <p key={msg}>{msg}</p>) }
-      </div>
-    );
   }
 
   function renderContent(): ReactElement {
@@ -72,32 +58,29 @@ function SignUpForm(): ReactElement {
     return (
       <form className="sign-up-form" onSubmit={signIn}>
         <h1>{S.welcome}</h1>
-        <div className="input-container">
-          <input
-            placeholder={S.username}
-            value={username}
-            onChange={onUsernameChange}
-          />
-          {renderWarnings(usernameErrors)}
-        </div>
-        <div className="input-container">
-          <input
-            placeholder={S.password}
-            value={password}
-            onChange={onPasswordChange}
-            type="password"
-          />
-          {renderWarnings(passwordErrors)}
-        </div>
-        <div className="input-container">
-          <input
-            placeholder={S.confirmPassword}
-            value={confirmPassword}
-            onChange={onConfirmPasswordChange}
-            type="password"
-          />
-          {renderWarnings(checkPasswordsMatch() ? [] : [S.passwordsMustMatch])}
-        </div>
+        <TextInputAndValidate
+          placeholder={S.username}
+          inputValue={username}
+          inputChange={setUsername}
+          errors={getErrors(username, usernameChecks)}
+        />
+
+        <TextInputAndValidate
+          placeholder={S.password}
+          inputValue={password}
+          inputChange={setPassword}
+          errors={getErrors(password, passwordChecks)}
+          type="password"
+        />
+
+        <TextInputAndValidate
+          placeholder={S.confirmPassword}
+          inputValue={confirmPassword}
+          inputChange={setConfirmPassword}
+          errors={checkPasswordsMatch() ? [] : [S.passwordsMustMatch]}
+          type="password"
+        />
+
         <button
           type="submit"
           disabled={!checkFormValid()}
